@@ -1,12 +1,13 @@
+import os
+
 from email import message
 from flask import Flask, request
 from flask import jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Float
-from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from flask_mail import Mail, Message
-import os
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Float
 
 
 app = Flask(__name__)
@@ -122,7 +123,7 @@ def url_variables(name: str, age: int):
 @app.route('/planets', methods=['GET'])
 def planets():
     planets_list = Planet.query.all()
-    result = planets_schema.dump(planets_list)
+    result = planets_schema.dump(planets_list) # Marshmallow deserialization example (convert object into byte stream).
     return jsonify(result)
 
 
@@ -130,7 +131,7 @@ def planets():
 def planet_details(planet_id: id):
     planet = Planet.query.filter_by(planet_id=planet_id).first()
     if planet:
-        result = planet_schema.dump(planet) # convert object into byte stream. 
+        result = planet_schema.dump(planet) # # Marshmallow deserialization example (convert object into byte stream). 
         return jsonify(result)
     else:
         return jsonify('That planet does not exist.'), 404
@@ -300,7 +301,6 @@ planet_schema = PlanetSchema() # deserialize a single object
 planets_schema = PlanetSchema(many=True) # deserialize multiple objects
 
 
-# Now we need a script to manage our database!
 
 
 if __name__ == "__main__":
